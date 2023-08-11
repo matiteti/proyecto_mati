@@ -6,12 +6,13 @@
 <body>
     <h1>Crear un Nuevo Curso</h1>
     <form method="post">
+        {% csrf_token %}
         <label for="nombre">Nombre del Curso:</label>
         <input type="text" name="nombre" required><br>
         <label for="numero_comision">Numero de Comision:</label>
         <input type="text" name="numero_comision" required><br>
         <button type="submit">Guardar</button>
     </form>
-    <a href="{% urls 'curso_list' %}">Volver a la lista de Cursos</a>
+    <a href="{% url 'curso_list' %}">Volver a la lista de cursos</a>
 </body>
 </html>

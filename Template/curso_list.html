@@ -6,8 +6,8 @@
 <body>
     <h1>Lista de cursos</h1>
 <ul>
-    {% for curso in cursos %}
-    <li>{curso.nombre} - Comision: {curso.numero_comision}</li>
+    {% for c in curso %}
+    <li>{{c.nombre}} - Comision: {{c.numero_comision}}</li>
     {% endfor %}
 </ul>    
 </body>
