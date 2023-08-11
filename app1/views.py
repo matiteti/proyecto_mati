@@ -7,6 +7,9 @@ import datetime
 
 # Create your views here.
 
+def index(request):
+    return render(request, 'index.html')
+
 def probandoTemplate(request):
    
     nom = "Nicolas"
@@ -27,5 +30,3 @@ def probandoTemplate(request):
 
     return HttpResponse(documento)
 
-def index(request):
-    return render(request, 'index.html')
