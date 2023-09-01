@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
-from django.template import Template, Context
-from django.http import HttpResponse
-from .models import Curso
-import datetime
+from django.contrib.auth import authenticate, login
+from .models import *
+from django.contrib import messages
+from .forms import *
 
 
 # Create your views here.
@@ -10,23 +10,88 @@ import datetime
 def index(request):
     return render(request, 'index.html')
 
-def probandoTemplate(request):
-   
-    nom = "Nicolas"
-    ap = "Perez"
-   
-    lista_de_notas = [1,2,3,5,8,3,2]
-    diccionario = {"nombre": nom, "apellido": ap, "hoy": datetime.datetime.now(), "notas": lista_de_notas} # <---- Para enviar al contexto
-   
-    mi_html = open("C:/Users/mteti/Documents/Coderhouse/Python/Proyecto/proyecto_mati/Template/Template.html")
-   
-    plantilla = Template(mi_html.read()) # Se carga en memoria nuestro documento
-    # OJO: Importar Template y Context con: from django.template import Template, Context
-   
-    mi_html.close() # Cerramos el archivo
-   
-    mi_contexto = Context(diccionario) # Le doy al contexto mi nombre y apellido
-    documento = plantilla.render(mi_contexto) # Aca renderizamos la plantilla en documento
+def intro(request):
+    return render(request, 'intro.html')
 
-    return HttpResponse(documento)
+def crear_usuario(request):
+    if request.method == 'POST':
+        form = Ingresoform(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Usuario creado exitosamente.')
+            return redirect('app1:intro')
+    else:
+        form = Ingresoform
+    return render(request, 'crear_usuario.html', {'form':form})
+
+
+def menu_inicio(request):
+    if request.method == 'POST':
+        return redirect('app1:menu')
+
+    return render(request, 'menu_inicio.html')
+
+
+def menu(request):
+    return render(request, 'menu.html')
+
+
+def fruta(request):
+    if request.method == 'POST':
+        fruta = request.POST.get('fruta')
+        cantidad = request.POST.get('cantidad')
+        peso = request.POST.get('peso')
+        compra_fruta = Fruta(fruta=fruta, cantidad=cantidad, peso=peso)
+        compra_fruta.save()
+        return redirect('app1:lista_fruta')
+
+    return render(request, 'fruta.html')
+
+def lista_fruta(request):
+    compra_fruta = Fruta.objects.last()  # Obtiene el último registro
+    return render(request, 'lista_fruta.html', {'compra_fruta': compra_fruta})
+
+
+def panaderia(request):
+    if request.method == 'POST':
+        pan = request.POST.get('pan')
+        cantidad = request.POST.get('cantidad')
+        peso = request.POST.get('peso')
+        compra = Panaderia(pan=pan, cantidad=cantidad, peso=peso)
+        compra.save()
+        return redirect('app1:lista_panaderia')
+
+    return render(request, 'panaderia.html')
+
+def lista_panaderia(request):
+    compra_pan = Panaderia.objects.last()  # Obtiene el último registro
+    return render(request, 'lista_panaderia.html', {'compra_pan': compra_pan})
+
+
+def carniceria(request):
+    if request.method == 'POST':
+        carne = request.POST.get('carne')
+        cantidad = request.POST.get('cantidad')
+        peso = request.POST.get('peso')
+        compra = Carniceria(carne=carne, cantidad=cantidad, peso=peso)
+        compra.save()
+        return redirect('app1:lista_carniceria')
+
+    return render(request, 'carniceria.html')
+
+def lista_carniceria(request):
+    compra_carne = Carniceria.objects.last()  # Obtiene el último registro
+    return render(request, 'lista_carniceria.html', {'compra_carne': compra_carne})
+
+def buscar_cursos_por_id(request):
+    form = BusquedaForm(request.GET)
+    elementos = []
+    
+    if form.is_valid():
+        id = form.cleaned_data.get('id')
+        
+        if id:
+            elementos = Fruta.objects.filter(id__icontains=id)
+    
+    return render(request, 'app1:buscar_cursos_por_id', {'form': form, 'elementos': elementos})
 
